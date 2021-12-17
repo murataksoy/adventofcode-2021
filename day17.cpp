@@ -14,6 +14,7 @@
 #include <sstream>
 
 using namespace std;
+int count_v = 0;
 
 bool y_target_ok(int vy, array<int, 2> yt)
 {
@@ -56,7 +57,7 @@ int target_ok(int vx, int vy, array<int, 2> xt, array<int, 2> yt)
         x += vx;
         if (vx > 0) vx--;
         else if (vx < 0) vx++;
-        if (y >= yt[0] and y <= yt[1] and x >= xt[0] and x <= xt[1]) return y_max;
+        if (y >= yt[0] and y <= yt[1] and x >= xt[0] and x <= xt[1]) {count_v++; return y_max;}
     }
     return -1;
 }
@@ -83,7 +84,7 @@ int main()
     int vyp = 0;
     for (int vx = vx_min; vx <= 100*vx_max; vx++)
     {
-        for (int vy = vy_min; vy <= 100*vy_max; vy++)
+        for (int vy = -100*vy_max; vy <= 100*vy_max; vy++)
         {
             int y = target_ok(vx, vy, xt, yt);
             if (y > y_max)
@@ -95,5 +96,6 @@ int main()
         }
     }
     cout << y_max << " " << vxp << " " << vyp << endl;
+    cout << " count " << count_v << endl;
 
 }
