@@ -162,9 +162,9 @@ bool explode(number * num)
     bool found = false;
     number * neigh = NULL;
 
-    number * num_to_explode = find_depth(num, 3);
-    // cout << "num_to_explode " << num_to_explode->number1->value << " " << num_to_explode->number2->value << endl;
+    number * num_to_explode = find_depth(num, 4);
     if (num_to_explode == NULL) return false;
+    //cout << "num_to_explode " << num_to_explode->number1->value << " " << num_to_explode->number2->value << endl;
 
     // looking at the right side of the second number
     found = false;
@@ -217,28 +217,82 @@ void split(number * num, bool& found)
         split(num->number1, found);
         split(num->number2, found);
     }
-
 }
 
+number * add(number* n1, number * n2)
+{
+    number * res = new number;
+    res->type = PAIR;
+    res->number1 = n1;
+    res->number2 = n2;
+    return res;
+}
+
+void explode_split(number * num)
+{
+    while(true)
+    {
+        //cout << num_to_string(num) << endl;
+        while(explode(num))
+        {
+            //cout << num_to_string(num) << endl;
+        }
+        bool found = false;
+        //cout << "splitting " << endl;
+        split(num, found);
+        //cout << num_to_string(num) << endl;
+        if (found == false)
+        {
+            break;
+        }
+    }
+}
+
+
+int calc_mag(number * num)
+{
+    if (num->type == REGULAR_NUMBER) return num->value;
+    return calc_mag(num->number1) * 3 + calc_mag(num->number2) * 2;
+}
 
 int main()
 {
     fstream f;
     f.open("input.txt", ios::in);
     string str;
-    getline(f, str);
-    number * num = string_to_num(str);
+    vector<string> nums;
+    while(getline(f, str))
+    {
+        nums.push_back(str);
+    }
+
+    number * sum = string_to_num(nums[0]);
+    for (int i = 1; i < nums.size(); i++)
+    {
+        sum = add(sum, string_to_num(nums[i]));
+        explode_split(sum);
+        //cout << "after explode and split";
+        //cout << num_to_string(sum) << endl;
 
 
-    cout << "before explosion " << num_to_string(num) << endl;
-    explode(num);
-    cout << "after explosion " << num_to_string(num) << endl;
+    }
+    cout << calc_mag(sum) << endl;
+
+    // part 2
+    int max_mag = 0;
+    for (int i = 0; i < nums.size(); i++)
+    {
+        for (int j = 0; j < nums.size(); j++)
+        {
+            if (i==j) continue;
+            sum = add(string_to_num(nums[i]), string_to_num(nums[j]));
+            explode_split(sum);
+            max_mag = max(max_mag, calc_mag(sum));
+        }
+    }
+    cout << max_mag << endl;
 
 
-    cout << "before split " << num_to_string(num) << endl;
-    bool found = false;
-    split(num, found);
-    cout << "after split " << num_to_string(num) << endl;
 
 
 }
